@@ -71,7 +71,7 @@ def proc(p, _enable, _generic_anime, _adv_waifu, _coomer, _prompt_tmpl, _ovr_ste
                                                          _generic_anime, _adv_waifu,
                                                          _coomer)
    if _ovr_cfg_dumb:
-      p.cfg_scale = 3.5
+      p.cfg_scale = 3.0 if p.steps <= 5 else 3.5
    elif _ovr_cfgs:
       p.cfg_scale = ovr_cfgs(p.steps, p.cfg_scale)
    if _ovr_clip_skip:
