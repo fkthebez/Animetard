@@ -2,7 +2,7 @@
 
 ### An easy mode for the retard.
 
-![](https://files.catbox.moe/uj2h87.png)
+![](https://files.catbox.moe/rat912.png)
 
 *"if you decrease the amount of options a user has available
    you also decrease the amount of things he can possibly fuck up"*
