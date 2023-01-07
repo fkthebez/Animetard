@@ -23,6 +23,7 @@ k_basedir = scripts.basedir()
 g = {
    "enable" : True,
    "adv_waifu" : False,
+   "coomer" : False,
    "prompt_tmpl" : next(iter(k_prompt_map)),
 }
 
@@ -41,10 +42,11 @@ def replace_match(v, generic_anime):
    return [x.replace(k_sentinel, ("animetard_bad-artist-anime" if generic_anime else
                                   "animetard_bad-artist")) for x in v]
 
-def ovr_prompt(tmpl, pos, neg, adv_waifu, generic_anime):
+def ovr_prompt(tmpl, pos, neg, generic_anime, adv_waifu, coomer):
    v = replace_match(k_prompt_map[tmpl], generic_anime)
 
-   return ([apply_tmpl(x, v[0] + ("solo 1girl, " if adv_waifu else ""), v[1]) for x in pos],
+   return ([apply_tmpl(x, ("(nsfw:1.2) " if coomer else "") + v[0] +
+                       ("solo 1girl, " if adv_waifu else ""), v[1]) for x in pos],
            [apply_tmpl(x, v[2], v[3]) for x in neg])
 
 def ovr_cfgs(steps, cfgs):
@@ -54,7 +56,7 @@ def ovr_cfgs(steps, cfgs):
    else:
       return min(cfgs, 4.0 + (steps - 7) * 0.5)
 
-def proc(p, _enable, _generic_anime, _adv_waifu, _prompt_tmpl, _ovr_steps,
+def proc(p, _enable, _generic_anime, _adv_waifu, _coomer, _prompt_tmpl, _ovr_steps,
          _ovr_sampler, _ovr_prompt, _ovr_cfgs, _ovr_cfg_dumb, _ovr_clip_skip):
    if not _enable:
       return
@@ -66,7 +68,8 @@ def proc(p, _enable, _generic_anime, _adv_waifu, _prompt_tmpl, _ovr_steps,
    if _ovr_prompt:
       p.all_prompts, p.all_negative_prompts = ovr_prompt(_prompt_tmpl, p.all_prompts,
                                                          p.all_negative_prompts,
-                                                         _adv_waifu, _generic_anime)
+                                                         _generic_anime, _adv_waifu,
+                                                         _coomer)
    if _ovr_cfg_dumb:
       p.cfg_scale = 3.5
    elif _ovr_cfgs:
@@ -99,6 +102,11 @@ def make_ui():
                                               "prompting techniques"), value=False)
                adv_waifu.change(fn=update_fn("adv_waifu", bool), inputs=enable)
                elms.append(adv_waifu)
+
+
+               coomer = gr.Checkbox(label=("Optimize for coomer"), value=False)
+               coomer.change(fn=update_fn("coomer", bool), inputs=enable)
+               elms.append(coomer)
 
                gr.HTML("\n");
 
@@ -157,7 +165,7 @@ def wrap(old_fn, new_fn):
 # override the token counter so it is an accurate representation
 def update_token_counter_wrap(fn, text, steps):
    if g["enable"]:
-      text = ovr_prompt(g["prompt_tmpl"], [text], [""], g["adv_waifu"], False)[0][0]
+      text = ovr_prompt(g["prompt_tmpl"], [text], [""], False, g["adv_waifu"], g["coomer"])[0][0]
 
    return fn(text, steps)
 
