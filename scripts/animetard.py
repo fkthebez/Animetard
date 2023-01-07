@@ -51,10 +51,10 @@ def ovr_prompt(tmpl, pos, neg, generic_anime, adv_waifu, coomer):
 
 def ovr_cfgs(steps, cfgs):
    # save the user from himself
-   if steps <= 6:
-      return min(cfgs, 3.5)
+   if steps <= 5:
+      return min(cfgs, 3)
    else:
-      return min(cfgs, 4.0 + (steps - 7) * 0.5)
+      return min(cfgs, 3.5 + (steps - 7) * 0.5)
 
 def proc(p, _enable, _generic_anime, _adv_waifu, _coomer, _prompt_tmpl, _ovr_steps,
          _ovr_sampler, _ovr_prompt, _ovr_cfgs, _ovr_cfg_dumb, _ovr_clip_skip):
