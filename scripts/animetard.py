@@ -28,9 +28,9 @@ g = {
 }
 
 def ovr_sampler(steps):
-   if steps <= 6:
+   if steps <= 5:
       return "DPM++ 2M", True
-   elif 7 <= steps <= 10:
+   elif 6 <= steps <= 10:
       return "DPM++ 2M Karras", True
    else:
       return "DPM++ 2M Karras", False
@@ -102,7 +102,6 @@ def make_ui():
                                               "prompting techniques"), value=False)
                adv_waifu.change(fn=update_fn("adv_waifu", bool), inputs=enable)
                elms.append(adv_waifu)
-
 
                coomer = gr.Checkbox(label=("Optimize for coomer"), value=False)
                coomer.change(fn=update_fn("coomer", bool), inputs=enable)
