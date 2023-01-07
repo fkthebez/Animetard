@@ -5,7 +5,8 @@ import sys
 import gradio as gr
 
 from modules import scripts, ui, devices
-from modules.shared import opts, sd_model
+import modules.shared as shared
+from modules.shared import opts
 from modules.textual_inversion.textual_inversion import Embedding
 from modules.sd_hijack import model_hijack
 
@@ -53,11 +54,13 @@ def ovr_cfgs(steps, cfgs):
    else:
       return min(cfgs, 4.0 + (steps - 7) * 0.5)
 
-def proc(p, _enable, _generic_anime, _adv_waifu, _prompt_tmpl, _ovr_sampler,
-         _ovr_prompt, _ovr_cfgs, _ovr_cfg_dumb, _ovr_clip_skip):
+def proc(p, _enable, _generic_anime, _adv_waifu, _prompt_tmpl, _ovr_steps,
+         _ovr_sampler, _ovr_prompt, _ovr_cfgs, _ovr_cfg_dumb, _ovr_clip_skip):
    if not _enable:
       return
 
+   if _ovr_steps:
+      p.steps = max(min(p.steps, 15), 5)
    if _ovr_sampler:
       p.sampler_name, opts.always_discard_next_to_last_sigma = ovr_sampler(p.steps)
    if _ovr_prompt:
@@ -68,7 +71,6 @@ def proc(p, _enable, _generic_anime, _adv_waifu, _prompt_tmpl, _ovr_sampler,
       p.cfg_scale = 3.5
    elif _ovr_cfgs:
       p.cfg_scale = ovr_cfgs(p.steps, p.cfg_scale)
-
    if _ovr_clip_skip:
       opts.CLIP_stop_at_last_layers = 2
 
@@ -108,6 +110,7 @@ def make_ui():
                elms.append(prompt_tmpl)
 
             with gr.Accordion("Super advanced (very scary)", open=False):
+               elms.append(gr.Checkbox(label="Override steps", value=True))
                elms.append(gr.Checkbox(label="Override sampler", value=True))
                elms.append(gr.Checkbox(label="Override prompt", value=True))
                elms.append(gr.Checkbox(label="Override CFG scale", value=True))
@@ -134,7 +137,7 @@ def load_embeddings():
       emb.vectors = vec.shape[0]
       emb.shape = vec.shape[-1]
 
-      model_hijack.embedding_db.register_embedding(emb, sd_model)
+      model_hijack.embedding_db.register_embedding(emb, shared.sd_model)
 
    for root, dirs, fns in os.walk(os.path.join(k_basedir, "models")):
       for fn in fns:
