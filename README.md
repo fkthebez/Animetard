@@ -11,4 +11,6 @@ You need a good anime model, like anythingv3 (https://huggingface.co/Linaqruf/an
 
 Maybe not retard-oriented enough, so there may be more updates to further help the retard.
 
-license is SPDX : 0BSD, for more info read LICENSE
+Just download as .zip and move into `stable-diffusion-webui/extensions`.
+
+License is SPDX : 0BSD, for more info read LICENSE.
