@@ -44,7 +44,7 @@ def replace_match(v, generic_anime):
 def ovr_prompt(tmpl, pos, neg, adv_waifu, generic_anime):
    v = replace_match(k_prompt_map[tmpl], generic_anime)
 
-   return ([apply_tmpl(x, v[0] + "solo 1girl, ", v[1]) for x in pos],
+   return ([apply_tmpl(x, v[0] + ("solo 1girl, " if adv_waifu else ""), v[1]) for x in pos],
            [apply_tmpl(x, v[2], v[3]) for x in neg])
 
 def ovr_cfgs(steps, cfgs):
